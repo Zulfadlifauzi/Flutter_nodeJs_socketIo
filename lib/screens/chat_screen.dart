@@ -38,6 +38,16 @@ class _ChatScreenState extends State<ChatScreen> {
         child: Column(
           children: [
             Expanded(
+                child: Obx(
+              () => Container(
+                padding: EdgeInsets.only(top: 10),
+                child: Text(
+                  'Connected User ${chatController.connectedUser}',
+                  style: TextStyle(color: Colors.white, fontSize: 20),
+                ),
+              ),
+            )),
+            Expanded(
                 flex: 9,
                 child: Obx(
                   () => ListView.builder(
@@ -97,6 +107,10 @@ class _ChatScreenState extends State<ChatScreen> {
     socket.on('message-receive', (data) {
       print(data);
       chatController.chatMessages.add(Message.fromJson(data));
+    });
+    socket.on('connected-user', (data) {
+      print(data);
+      chatController.connectedUser.value = data;
     });
   }
 }

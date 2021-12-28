@@ -15,7 +15,7 @@ class MessageItem extends StatelessWidget {
         decoration: BoxDecoration(
             color: sentByMe ? Colors.purple : Colors.white,
             borderRadius: BorderRadius.circular(5)),
-        margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+        margin: const EdgeInsets.only(top: 5, bottom: 5, left: 10),
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.baseline,
