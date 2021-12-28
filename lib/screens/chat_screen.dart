@@ -33,20 +33,22 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.white,
       body: Container(
         child: Column(
           children: [
-            Expanded(
-                child: Obx(
+            Obx(
               () => Container(
-                padding: EdgeInsets.only(top: 10),
+                height: 40,
+                alignment: Alignment.center,
+                width: double.infinity,
+                color: Colors.amber,
                 child: Text(
                   'Connected User ${chatController.connectedUser}',
-                  style: TextStyle(color: Colors.white, fontSize: 20),
+                  style: TextStyle(color: Colors.black, fontSize: 16),
                 ),
               ),
-            )),
+            ),
             Expanded(
                 flex: 9,
                 child: Obx(
@@ -61,35 +63,44 @@ class _ChatScreenState extends State<ChatScreen> {
                       }),
                 )),
             Expanded(
-                child: Container(
-              padding: EdgeInsets.all(10),
-              child: TextField(
-                style: TextStyle(color: Colors.white),
-                cursorColor: Colors.purple,
-                controller: msgInputController,
-                decoration: InputDecoration(
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white),
-                      borderRadius: BorderRadius.circular(10),
+              child: Row(
+                children: [
+                  Expanded(
+                      child: Container(
+                    padding: EdgeInsets.all(10),
+                    child: TextField(
+                      style: TextStyle(color: Colors.black),
+                      cursorColor: Colors.purple,
+                      controller: msgInputController,
+                      decoration: InputDecoration(
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.black),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.black),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
                     ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    suffixIcon: Container(
-                      margin: const EdgeInsets.only(right: 1),
-                      decoration: BoxDecoration(
-                          color: Colors.blueAccent,
-                          borderRadius: BorderRadius.circular(10)),
-                      child: IconButton(
-                          onPressed: () {
-                            sendMessage(msgInputController.text);
-                            msgInputController.text = '';
-                          },
-                          icon: const Icon(Icons.send, color: Colors.white)),
-                    )),
+                  )),
+                  Container(
+                    height: 50,
+                    width: 50,
+                    margin: EdgeInsets.only(right: 10),
+                    decoration: BoxDecoration(
+                        color: Colors.amber,
+                        borderRadius: BorderRadius.circular(10)),
+                    child: IconButton(
+                        onPressed: () {
+                          sendMessage(msgInputController.text);
+                          msgInputController.text = '';
+                        },
+                        icon: const Icon(Icons.send, color: Colors.white)),
+                  ),
+                ],
               ),
-            ))
+            )
           ],
         ),
       ),
