@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
 class MessageItem extends StatelessWidget {
-  const MessageItem({Key? key, required this.sentByMe}) : super(key: key);
+  const MessageItem({Key? key, required this.sentByMe, required this.message})
+      : super(key: key);
 
   final bool sentByMe;
+  final String message;
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +23,7 @@ class MessageItem extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              'Hello',
+              message,
               style: TextStyle(
                   fontSize: 18, color: sentByMe ? Colors.white : Colors.purple),
             ),

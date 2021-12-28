@@ -1,12 +1,37 @@
+import 'package:chatappflutter/controller/chat_controller.dart';
+import 'package:chatappflutter/model/message.dart';
 import 'package:chatappflutter/screens/message_item.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
+import 'package:socket_io_client/socket_io_client.dart' as _io;
 
-class ChatScreen extends StatelessWidget {
+class ChatScreen extends StatefulWidget {
   const ChatScreen({Key? key}) : super(key: key);
 
   @override
+  State<ChatScreen> createState() => _ChatScreenState();
+}
+
+class _ChatScreenState extends State<ChatScreen> {
+  TextEditingController msgInputController = TextEditingController();
+  late _io.Socket socket;
+  ChatController chatController = ChatController();
+
+  @override
+  void initState() {
+    socket = _io.io(
+        'http://localhost:4000',
+        _io.OptionBuilder()
+            .setTransports(['websocket']) // for Flutter or Dart VM
+            .disableAutoConnect() // disable auto-connection
+            .build());
+    socket.connect();
+    setUpSocketListener();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    TextEditingController msgInputController = TextEditingController();
     return Scaffold(
       backgroundColor: Colors.black,
       body: Container(
@@ -14,12 +39,14 @@ class ChatScreen extends StatelessWidget {
           children: [
             Expanded(
                 flex: 9,
-                child: Container(
-                  child: ListView.builder(
-                      itemCount: 10,
+                child: Obx(
+                  () => ListView.builder(
+                      itemCount: chatController.chatMessages.length,
                       itemBuilder: (context, index) {
+                        var currentItem = chatController.chatMessages[index];
                         return MessageItem(
-                          sentByMe: false,
+                          sentByMe: currentItem.sentByMe == socket.id,
+                          message: currentItem.message.toString(),
                         );
                       }),
                 )),
@@ -46,7 +73,7 @@ class ChatScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(10)),
                       child: IconButton(
                           onPressed: () {
-                            sendMessage(msgInputController);
+                            sendMessage(msgInputController.text);
                             msgInputController.text = '';
                           },
                           icon: const Icon(Icons.send, color: Colors.white)),
@@ -58,6 +85,18 @@ class ChatScreen extends StatelessWidget {
       ),
     );
   }
-}
 
-void sendMessage(TextEditingController msgInputController) {}
+  void sendMessage(String text) {
+    var messageJson = {'message': text, 'sentByMe': socket.id};
+
+    socket.emit('message', messageJson);
+    chatController.chatMessages.add(Message.fromJson(messageJson));
+  }
+
+  void setUpSocketListener() {
+    socket.on('message-receive', (data) {
+      print(data);
+      chatController.chatMessages.add(Message.fromJson(data));
+    });
+  }
+}
